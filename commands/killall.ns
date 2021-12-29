@@ -1,0 +1,30 @@
+import { scanAllServers } from "/lib/hackingHelpers.ns";
+
+const argsSchema = [
+    ['all', false],
+    ['silent', false], //@TODO: Pending implementation
+];
+
+export function autocomplete(data, args) {
+    data.flags(argsSchema);
+    return [...data.servers];
+}
+
+/** @param {NS} ns **/
+export async function main(ns) {
+    const host = ns.getHostname();
+    const flags = ns.flags(argsSchema);
+    const target = flags._[0];
+
+    if (target && flags.all === false) {
+        ns.killall(target);
+    } else if (flags.all === true) {
+        const serverList = scanAllServers(ns);
+
+        for (const server of serverList) {
+            if (server == host) { continue; }
+            if (ns.ps(server) === 0) { continue; }
+            ns.killall(server);
+        }
+    }
+}
