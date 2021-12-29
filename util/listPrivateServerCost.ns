@@ -1,0 +1,7 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+	var i = 0; 
+	for (i = 1; i <= 20; i++) {
+		ns.tprint(i + " -- " + ns.nFormat(ns.getPurchasedServerCost(Math.pow(2, i)), '$0.0a') + ' -- RAM: ' + Math.pow(2, i) );
+	}    
+}
