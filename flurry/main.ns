@@ -1,4 +1,5 @@
 import * as fauxFormulas from "/flurry/fauxFormulas.js";
+import { formatRam } from "/lib/formatHelpers.ns";
 
 /** @param {NS} ns **/
 export async function main(ns) {
@@ -84,12 +85,8 @@ export async function main(ns) {
 
   var totalRamForRun = hackscriptRam * hackThreads + growscriptRam * growThreads + weakenscriptRam * weakenThreads; // Calculating how much RAM is used for a single run
   var sleepTime = WeakenTime / (maxRam / totalRamForRun);
+
   // finding how many runs this server can handle and setting the time between run execution
-
-  // if (sleepTime<500) // Testing forcing a min sleep time of 500 ms
-  // {sleepTime = 500;
-  // }
-
   var shiftCount = maxRam / totalRamForRun;
   var offset = sleepTime / 2;
   var gOffset = offset / 4;
@@ -116,8 +113,8 @@ export async function main(ns) {
       }
       i++;
     } else {
-      ns.toast(`Not enough RAM. ${maxRam - UsedRam} available but ${totalRamForRun} needed`, "warning");
-      ns.print(`Not enough RAM. ${maxRam - UsedRam} available but ${totalRamForRun} needed`);
+      ns.toast(`Not enough RAM. ${formatRam(maxRam - UsedRam)} available but ${formatRam(totalRamForRun)} needed`, "warning");
+      ns.print(`Not enough RAM. ${formatRam(maxRam - UsedRam)} available but ${formatRam(totalRamForRun)} needed`);
 
       await ns.sleep(1000);
     }
