@@ -5,8 +5,6 @@ export async function main(ns) {
 	let quantity = ns.args[2] || 5;
 	let ram = Math.min(Math.pow(2, 20), Math.pow(2, multiplier));
 
-	ns.tail();
-
 	let currenServerCount = ns.getPurchasedServers().length;
 
 	for (let i = 0; i < quantity; i++) {
