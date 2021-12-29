@@ -1,0 +1,19 @@
+import * as sharedlib from "sharedLibrary.ns";
+
+
+/** @param {NS} ns **/
+export async function main(ns) {
+	while(true) {
+		var allServers = await sharedlib.findAllServers(ns);
+        var nhrArray = await sharedlib.findHackableServers(ns, allServers);
+        var hackableServers = nhrArray[0];
+        var rootableServers = nhrArray[1];
+        var optimalServer = nhrArray[2];
+
+        for (let i = 0; i < rootableServers.length; i++) {
+            // ns.installBackdoor(rootableServers[i]);
+        }
+
+        await ns.sleep(10000)
+	}
+}

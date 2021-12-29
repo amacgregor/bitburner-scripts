@@ -1,0 +1,52 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    let t = 1;
+    let targets = ns.getPurchasedServers();
+    for (let i = 0; i < targets.length; i++) {
+        createDisplay(targets[i])
+    }
+
+    function createDisplay(name) {
+        const display = document.getElementById(name + '-hook-0');
+        if (typeof (display) == 'undefined' || display == null) {
+            const extraHookRow = document.getElementById('overview-extra-hook-0').parentElement.parentElement
+            const clonedRow = extraHookRow.cloneNode(true)
+            clonedRow.childNodes[0].childNodes[0].id = name + '-hook-0'
+            clonedRow.childNodes[0].childNodes[0].innerHTML = name
+            clonedRow.childNodes[1].childNodes[0].id = name + '-hook-1'
+            clonedRow.childNodes[2].childNodes[0].id = name + '-hook-2'
+            extraHookRow.parentNode.insertBefore(clonedRow, extraHookRow.nextSibling)
+        }
+    }
+
+    while (true) {
+        await updateEarnings(ns, targets, t)
+        t = t + 1;
+        await ns.sleep(1000)
+    }
+}
+async function updateEarnings(ns, targets, t) {
+    for (let i = 0; i < targets.length; i++) {
+        let scripts = ns.ps(targets[i])
+        let pid = []
+        for (let i = 0; i < scripts.length; i++) {
+            pid.push(scripts[i].pid)
+        }
+
+        if (scripts.length > 0) {
+            for (let s in scripts) {
+                if (scripts[s].filename == ns.args[0]) {
+                    document.getElementById(`${targets[i]}-hook-1`).innerHTML = ns.nFormat(ns.getRunningScript(scripts[s].filename, targets[i], scripts[s].args[0]).onlineMoneyMade / ns.getRunningScript(scripts[s].filename, targets[i], scripts[s].args[0]).onlineRunningTime, '$0.0a') + "/sec";
+                    break;
+                } else {
+                    document.getElementById(`${targets[i]}-hook-1`).innerHTML = ns.nFormat(0, '$0.0a');
+                }
+            }
+        } else {
+            document.getElementById(`${targets[i]}-hook-1`).innerHTML = ns.nFormat(0, '$0.0a');
+        }
+        
+    }
+    ns.print(t)
+
+}

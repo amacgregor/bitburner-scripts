@@ -1,0 +1,109 @@
+/**
+ * Scan all available servers and copies the scripts to all of them
+ * 
+ * returns array with all servers
+ */
+export async function findAllServers(ns) {
+	const scriptList = ["hack.ns", "weaken.ns", "grow.ns"];
+	var q = [];
+	var discoveredServers = [];
+
+	q.push("home");
+	discoveredServers["home"] = true;
+
+	while (q.length) {
+		let v = q.shift();
+		let edges = ns.scan(v);
+
+		for (let i = 0; i < edges.length; i++) {
+			if (!discoveredServers[edges[i]]) {
+				discoveredServers[edges[i]] = true;
+				q.push(edges[i]);
+				
+				await ns.scp(scriptList, "home", edges[i]);
+			}
+		}
+	}
+	return Object.keys(discoveredServers);
+}
+
+export async function findOptimalServer(ns, hackableServers) {
+	let optimalServer = "n00dles";
+	let optimalVal = 0;
+	let currentVal;
+	let currentTime;
+
+	for (let i = 0; i < hackableServers.length; ++i) {
+		currentVal = ns.getServerMaxMoney(hackableServers[i]);
+		currentTime = ns.getWeakenTime(hackableServers[i]) + ns.getGrowTime(hackableServers[i]) + ns.getHackTime(hackableServers[i]);
+
+		currentVal /= currentTime;
+
+		if (currentVal >= optimalVal) {
+			optimalVal = currentVal;
+			optimalServer = hackableServers[i];
+		}
+	}
+
+	return optimalServer;
+}
+
+export async function findHackableServers(ns, serverList) {
+	var hackableServers = [];
+	var rootableServers = [];
+	var numPortsPossible = 0;
+
+	if (ns.fileExists("BruteSSH.exe", "home")) {
+        numPortsPossible += 1;
+    }
+    if (ns.fileExists("FTPCrack.exe", "home")) {
+        numPortsPossible += 1;
+    }
+    if (ns.fileExists("RelaySMTP.exe", "home")) {
+        numPortsPossible += 1;
+    }
+    if (ns.fileExists("HTTPWorm.exe", "home")) {
+        numPortsPossible += 1;
+    }
+    if (ns.fileExists("SQLInject.exe", "home")) {
+        numPortsPossible += 1;
+    }
+
+	for (let i = 0; i < serverList.length; ++i) {
+		if (ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(serverList[i]) && numPortsPossible >= ns.getServerNumPortsRequired(serverList[i])) {
+			hackableServers.push(serverList[i]);
+		}
+
+		if (serverList[i] != "home" && (ns.hasRootAccess(serverList[i]) || (numPortsPossible >= ns.getServerNumPortsRequired(serverList[i])))) {
+			rootableServers.push(serverList[i]);
+
+            if (!ns.hasRootAccess(serverList[i])) {
+                if (ns.fileExists("BruteSSH.exe")) {
+                    ns.brutessh(serverList[i]);
+                }
+                if (ns.fileExists("FTPCrack.exe")) {
+                    ns.ftpcrack(serverList[i]);
+                }
+                if (ns.fileExists("RelaySMTP.exe")) {
+                    ns.relaysmtp(serverList[i]);
+                }
+                if (ns.fileExists("HTTPWorm.exe")) {
+                    ns.httpworm(serverList[i]);
+                }
+                if (ns.fileExists("SQLInject.exe")) {
+                    ns.sqlinject(serverList[i]);
+                }
+                ns.nuke(serverList[i]);
+            }
+		}
+	}
+ 
+	let optimalServer = await findOptimalServer(ns, hackableServers);
+
+	return [hackableServers, rootableServers, optimalServer];
+}
+
+export function asMoney(amount) {
+	var usd = new Intl.NumberFormat("en-US", { style: "currency", "currency":"USD" });
+	return usd.format(amount)
+}

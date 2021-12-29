@@ -1,0 +1,12 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+        var moneyThresh = ns.getServerMaxMoney(ns.args[0]) * 0.75;
+		var moneyAvailable = ns.getServerMoneyAvailable(ns.args[0]);
+
+		var growth = moneyThresh / moneyAvailable;
+		var growthAnalyse = ns.growthAnalyze(ns.args[0], growth)
+
+		ns.tprint(moneyThresh);
+		ns.tprint(moneyAvailable);
+		ns.tprint(growthAnalyse);
+}

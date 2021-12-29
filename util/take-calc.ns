@@ -1,0 +1,7 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+	const penalty = 0.25;
+	let exp = ns.args[0];
+
+	ns.tprint(exp - (exp * penalty));
+}

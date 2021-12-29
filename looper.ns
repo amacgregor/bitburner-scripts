@@ -1,0 +1,62 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    const flags = ns.flags([
+        ['refreshrate', 200],
+        ['help', false],
+    ])
+    const server = flags._[0];
+
+    var target = ns.args[0];
+    var moneyThresh = ns.getServerMaxMoney(target) * 0.90;
+    var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
+
+    const script = ns.getRunningScript();
+
+    ns.tail();
+
+    while(true) {
+        // Clear the logs
+        ns.clearLog(server);
+
+        // Initialize variables
+        let money = ns.getServerMoneyAvailable(target);
+        if (money === 0) money = 1;
+        const maxMoney = ns.getServerMaxMoney(target);
+        const minSec = ns.getServerMinSecurityLevel(target);
+        const sec = ns.getServerSecurityLevel(target);
+
+
+        if (ns.getServerSecurityLevel(target) > securityThresh) {
+            // Calculate threads needed
+            let wThreds = Math.ceil((sec - minSec) * 20); 
+            if (wThreds > script["threads"]) { wThreds = script["threads"]}
+
+            ns.print(`=== Weakening ${target} with ${ns.wThreds} threads ===`);
+            ns.print(`=== Running for: ${ns.tFormat(ns.getWeakenTime(target))} ===`);
+
+            await ns.weaken(target, {threads: wThreds});
+        } else if (ns.getServerMoneyAvailable(target) < moneyThresh) {
+            // Calculate threads needed
+            let gThreads = Math.ceil(ns.growthAnalyze(target, maxMoney / money)); 
+            if (gThreads > script["threads"]) { gThreads = script["threads"]}
+
+            ns.print(`=== Growing ${target} with ${gThreads} threads ===`);
+            ns.print(`=== Running for: ${ns.tFormat(ns.getGrowTime(target))} ===`);
+
+            await ns.grow(target, {threads: gThreads});
+        } else {
+            // Calculate threads needed
+            let hThreads = Math.ceil(ns.hackAnalyzeThreads(server, money / 2)); 
+            if (hThreads > script["threads"]) { hThreads = script["threads"]}
+
+            ns.print(`=== Hacking ${target} with ${hThreads} threads ===`);
+            ns.print(`=== Running for: ${ns.tFormat(ns.getHackTime(target))} ===`);
+
+            await ns.hack(target, {threads: hThreads});
+        }
+    }
+}
+
+export function autocomplete(data, args) {
+    return [...data.servers, ...data.scripts]; // This script    autocompletes the list of servers.
+}

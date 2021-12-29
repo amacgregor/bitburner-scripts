@@ -1,0 +1,73 @@
+import * as sharedlib from "sharedLibrary.ns";
+
+/**
+ * Find the optimal server to hack and start the hacking from all the servers  
+ * 
+ * @param {NS} ns **/
+export async function main(ns) {
+    while (true) {
+        var allServers = await sharedlib.findAllServers(ns);
+        var nhrArray = await sharedlib.findHackableServers(ns, allServers);
+        var hackableServers = nhrArray[0];
+        var rootableServers = nhrArray[1];
+        var optimalServer = ns.args[0] || nhrArray[2];
+
+        ns.print('[STARTED] === ' + optimalServer);
+
+        var target = optimalServer;
+        var moneyThreshold = ns.getServerMaxMoney(target) * 0.7;
+        var securityThreshold = ns.getServerMinSecurityLevel(target) + 3;
+        let numThreads = 1;
+        var numTimesToHack = 0.05;
+
+        // Filter hacking servers 
+        rootableServers = rootableServers.filter(function(value, index, arr){ 
+            return "x" != value.substring(0,1);
+        });
+
+        numTimesToHack += 1;
+
+        // Weaken/Grow/Hack Loop
+        if (ns.getServerSecurityLevel(target) > securityThreshold) {
+            ns.print('=== Weakening ===');
+
+            for (let i = 0; i < rootableServers.length; i++) {
+                ns.killall(rootableServers[i]);
+                numThreads = (ns.getServerMaxRam(rootableServers[i]) - ns.getServerUsedRam(rootableServers[i])); 
+                numThreads /= ns.getScriptRam("weaken.ns", "home");
+                numThreads = Math.floor(numThreads);
+
+                if (numThreads > 0) {
+                    ns.exec("weaken.ns", rootableServers[i], numThreads, target);
+                }
+            }
+            await ns.sleep(numTimesToHack * ns.getWeakenTime(target) + 300);
+        } else if (ns.getServerMoneyAvailable(target) < moneyThreshold) {
+            ns.print('=== Grow ===');
+
+            for (let i = 0; i < rootableServers.length; i++) {
+                ns.killall(rootableServers[i]);
+                numThreads = (ns.getServerMaxRam(rootableServers[i]) - ns.getServerUsedRam(rootableServers[i]));
+                numThreads /= ns.getScriptRam("grow.ns", "home");
+
+                if (numThreads > 0) {
+                    ns.exec("grow.ns", rootableServers[i], numThreads, target);
+                }
+            }
+            await ns.sleep(numTimesToHack * ns.getGrowTime(target) + 300);
+        } else {
+            ns.print('=== Hacking ===');
+
+            for (let i = 0; i < rootableServers.length; i++) {
+                ns.killall(rootableServers[i]);
+                numThreads = (ns.getServerMaxRam(rootableServers[i]) - ns.getServerUsedRam(rootableServers[i]));
+                numThreads /= ns.getScriptRam("hack.ns", "home");
+
+                if (numThreads > 0) {
+                    ns.exec("hack.ns", rootableServers[i], numThreads, target);
+                }
+            }
+            await ns.sleep(numTimesToHack * ns.getHackTime(target) + 300);
+        }
+    }
+}
