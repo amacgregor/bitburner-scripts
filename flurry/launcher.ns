@@ -15,15 +15,15 @@ export async function main(ns) {
     return;
   }
 
-  const scriptList = ["/payloads/hack.ns", "/payloads/weaken.ns", "/payloads/grow.ns", "/payloads/main.ns"];
+  const scriptList = ["/flurry/payloads/hack.ns", "/flurry/payloads/weaken.ns", "/flurry/payloads/grow.ns", "/flurry/main.ns"];
   const host = flags._[0];
-  const target =flags._[1];
+  const target = flags._[1];
 
   // Copy files
   await ns.scp(scriptList, "home", host);
 
   // Launch the flurry manager
-  await ns.exec("/payloads/main.ns", host, 1, target);
+  await ns.exec("/flurry/main.ns", host, 1, target);
 
   // Monitor the attack
   await ns.exec("/utils/monitor.ns", "home", 1, target);
