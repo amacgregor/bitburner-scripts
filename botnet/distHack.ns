@@ -1,4 +1,4 @@
-import * as sharedlib from "sharedLibrary.ns";
+import * as sharedlib from "/lib/hackingHelpers.ns";
 
 /**
  * Find the optimal server to hack and start the hacking from all the servers  
@@ -10,9 +10,7 @@ export async function main(ns) {
         var nhrArray = await sharedlib.findHackableServers(ns, allServers);
         var hackableServers = nhrArray[0];
         var rootableServers = nhrArray[1];
-        var optimalServer = nhrArray[2];
-
-        ns.tail();
+        var optimalServer = ns.args[0] || nhrArray[2];
 
         ns.print('[STARTED] === ' + optimalServer);
 
@@ -22,6 +20,10 @@ export async function main(ns) {
         let numThreads = 1;
         var numTimesToHack = 0.05;
 
+        // Filter hacking servers 
+        rootableServers = rootableServers.filter(function(value, index, arr){ 
+            return "x" != value.substring(0,1);
+        });
 
         numTimesToHack += 1;
 

@@ -1,4 +1,4 @@
-import * as sharedlib from "sharedLibrary.ns";
+import * as sharedlib from "/lib/hackingHelpers.ns";
 
 
 /** @param {NS} ns **/

@@ -1,4 +1,4 @@
-import { asMoney } from "sharedLibrary.ns";
+import { asMoney } from "/lib/hackingHelpers.ns";
 
 /** @param {NS} ns **/
 export async function main(ns) {
