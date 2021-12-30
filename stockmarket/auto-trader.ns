@@ -57,12 +57,8 @@ export async function main(ns) {
             if (playerMoney - moneyKeep > ns.stock.getPurchaseCost(stock, minSharePer, "Long")) {
                 var shares = Math.min((playerMoney - moneyKeep - 100000) / askPrice, orderMax / askPrice);
                 if (shares * askPrice > minBuy) {
-                    // ns.tprint("SHARES: " + shares);
-                    // ns.tprint("maxShares: " + maxShares);
-                    // ns.tprint("M<: " + Math.min(shares, maxShares));
-                    // ns.tprint("M>: " + ns.stock.getMaxShares(stock));
                     ns.stock.buy(stock, Math.min(shares, maxShares));
-                    ns.toast("PURCHASED " +  Math.min(shares, maxShares) + " of " + stock + " at " + asMoney(askPrice));
+                    ns.toast("PURCHASED " +  Math.min(shares, maxShares).toLocaleString('en-US') + " of " + stock + " at " + asMoney(askPrice), "info", 6000);
                     
                 }
             }
