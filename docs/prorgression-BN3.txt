@@ -1,0 +1,21 @@
+Start Agri
+Buy Smart Supply
+Get all Offices 3 people each Operations/Engineer/Business
+1 x Advert.Inc
+300 Storage on each
+Hardware 125 (12.5), AI Cores 75 (7.5), Real Estate 27k (2.7k)
+Upgrades +1 level in this order (+2 max): FocusWires, Neural Accelerators, Speech Processor Implants, Nuoptimal Nootropic Injector Implants, Smart Factories
+
+Should have ~1.5m/s
+Get ~210b investment
+
+Upgrade all offices to 9, 2 Operations, 2 Engineering, 1 Business, 2 Management, 2 R & D
+Smart Storage to 10
+FocusWires, Neural Accelerators, Speech Processor Implants, Nuoptimal Nootropic Injector Implants to 10
+
+7 wh upgrades per city (2k storage each)
+
+Hardware 2675 (267.5)
+Robots 96 (9.6)
+AI Cores 2445 (244.5)
+Real Estate 119400 (11940)

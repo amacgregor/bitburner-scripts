@@ -12,3 +12,4 @@
 - deltaone
 - omnitek
 - megacorp
+- ecorp
