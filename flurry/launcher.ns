@@ -15,7 +15,7 @@ export async function main(ns) {
     return;
   }
 
-  const scriptList = ["/flurry/payloads/hack.ns", "/flurry/payloads/weaken.ns", "/flurry/payloads/grow.ns", "/flurry/main.ns"];
+  const scriptList = ["/flurry/payloads/hack.ns", "/flurry/payloads/weaken.ns", "/flurry/payloads/grow.ns", "/flurry/fauxFormulas.ns", "/flurry/main.ns"];
   const host = flags._[0];
   const target = flags._[1];
 

@@ -44,7 +44,7 @@ export async function main(ns) {
 
   // Priming the target.  Max money and Min security must be acheived for this to work
   if (ma < mm == true) {
-    ns.toast(`Priming ${fserver} from ${host}`);
+    ns.toast(`Priming ${fserver} from ${host}`, "info", 6000);
     ns.exec("/flurry/payloads/weaken.ns", host, weakenThreads, target, 0);
     ns.exec("/flurry/payloads/grow.ns", host, maxGrowThreads, target, 0);
 
@@ -60,7 +60,7 @@ export async function main(ns) {
 
   // If Max Money is true, making sure security level is at its minimum
   if (cs > ms == true) {
-    ns.toast(`Lowering Security on ${target} from ${host}`);
+    ns.toast(`Lowering Security on ${target} from ${host}`, "info", 6000);
     ns.exec("/flurry/payloads/weaken.ns", host, weakenThreads, target, 0);
 
     WeakenTime = formulas.weakenTime(fserver, player);
@@ -113,7 +113,7 @@ export async function main(ns) {
       }
       i++;
     } else {
-      ns.toast(`Not enough RAM. ${formatRam(maxRam - UsedRam)} available but ${formatRam(totalRamForRun)} needed`, "warning");
+      ns.toast(`Not enough RAM. ${formatRam(maxRam - UsedRam)} available but ${formatRam(totalRamForRun)} needed`, "warning", 4000);
       ns.print(`Not enough RAM. ${formatRam(maxRam - UsedRam)} available but ${formatRam(totalRamForRun)} needed`);
 
       await ns.sleep(1000);
