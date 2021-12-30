@@ -29,7 +29,8 @@ export function autocomplete(data, _) {
  * TODO: Some way to list all files in the repository and/or download them all. **/
  export async function main(ns) {
     options = ns.flags(argsSchema);
-    const baseUrl = `https://raw.githubusercontent.com/${options.github}/${options.repository}/${options.branch}/`;
+    const protocol = "https://";
+    const baseUrl = `raw.githubusercontent.com/${options.github}/${options.repository}/${options.branch}/`;
     const confirmation = await ns.prompt('Script pull initiated. \nWARNING! This operation will override any existing copies of the files. Continue?')
 
     if (confirmation) {
@@ -47,6 +48,7 @@ export function autocomplete(data, _) {
         const filesToDownload = options['new-file'].concat(options.download.length > 0 ? options.download : await repositoryListing(ns));
         for (const localFilePath of filesToDownload) {
             const remoteFilePath = baseUrl + localFilePath.substr(options.subfolder.length).replace(/\/+/g, '/');
+            remoteFilePath = protocol + remoteFilePath.replace(/\/+/g, '/');
             ns.print(`Trying to update "${localFilePath}" from ${remoteFilePath} ...`);
             if (await ns.wget(`${remoteFilePath}?ts=${new Date().getTime()}`, localFilePath))
                 ns.tprint(`SUCCESS: Updated "${localFilePath}" to the latest from ${remoteFilePath}`);
