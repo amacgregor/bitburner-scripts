@@ -47,12 +47,12 @@ export function autocomplete(data, _) {
         
         const filesToDownload = options['new-file'].concat(options.download.length > 0 ? options.download : await repositoryListing(ns));
         for (const localFilePath of filesToDownload) {
-            const remoteFilePath = baseUrl + (baseUrl + localFilePath.substr(options.subfolder.length).replace(/\/+/g, '/')).replace(/\/+/g, '/');
+            const remoteFilePath = protocol + (baseUrl + localFilePath.substr(options.subfolder.length).replace(/\/+/g, '/')).replace(/\/+/g, '/');
             ns.print(`Trying to update "${localFilePath}" from ${remoteFilePath} ...`);
-            if (await ns.wget(`${remoteFilePath}?ts=${new Date().getTime()}`, localFilePath))
-                ns.tprint(`SUCCESS: Updated "${localFilePath}" to the latest from ${remoteFilePath}`);
+            if (await ns.wget(`${remoteFilePath}?ts=${new Date().getTime()}`, localFilePath.replace(/\/+/g, '/')))
+                ns.tprint(`SUCCESS: Updated "${localFilePath.replace(/\/+/g, '/')}" to the latest from ${remoteFilePath}`);
             else
-                ns.tprint(`WARNING: "${localFilePath}" was not updated. (Currently running or not located at ${remoteFilePath} )`)
+                ns.tprint(`WARNING: "${localFilePath.replace(/\/+/g, '/')}" was not updated. (Currently running or not located at ${remoteFilePath} )`)
         }
     } else {
         ns.toast("Operation Aborted!");
