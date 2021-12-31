@@ -1,0 +1,13 @@
+export const waitFor = async (ns, callback, timeout = 60000) => {
+    let timer = 0;
+    while (timer < timeout) {
+        const result = await callback();
+        if (result !== undefined) {
+            return result;
+        }
+        // silly but works for now
+        timer += 50;
+        await ns.sleep(50);
+    }
+    throw new Error(`waitFor failed after ${timeout}s`);
+};
